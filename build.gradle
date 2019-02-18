@@ -1,0 +1,37 @@
+plugins {
+    id 'groovy'
+    id 'java'
+    id 'application'
+}
+
+mainClassName = 'com.swathub.robot.Manager'
+
+group 'com.swathub'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.4'
+    compile group: 'com.sparkjava', name: 'spark-core', version: '2.8.0'
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+    compile group: 'org.apache.commons', name: 'commons-compress', version: '1.18'
+}
+
+task makejar(type: Jar, dependsOn: build) {
+    from files(sourceSets.main.output.classesDirs)
+    from files(sourceSets.main.output.resourcesDir)
+
+    from configurations.runtime.asFileTree.files.collect { zipTree(it) }
+
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+}
